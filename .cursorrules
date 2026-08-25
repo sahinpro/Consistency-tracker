@@ -1,0 +1,19 @@
+# Consistency Dashboard — Cursor rules
+
+Stack: Next.js 16 (App Router), TypeScript strict, Tailwind CSS v4, Supabase (Postgres + Auth + RLS), Web Push (VAPID) for notifications, deployed on Vercel. Package manager: Bun.
+
+## Conventions
+- TypeScript only. No `any` unless justified with a comment.
+- Server Components by default. Add `"use client"` only when the component needs state, effects, or browser APIs.
+- All Supabase access goes through `lib/supabase/client.ts` (browser) or `lib/supabase/server.ts` (server). Never instantiate a Supabase client inline in a component.
+- Never bypass Row Level Security. If a route genuinely needs elevated access (e.g. the cron job), use the service-role client explicitly in that one file only, never export it for reuse in user-facing code.
+- Date/time logic goes through `lib/dates.ts`. Asia/Dhaka is UTC+6, no DST — don't assume the server's local timezone.
+- Bengali digits in any user-facing number: run through `toBn()` from `lib/dates.ts`. Don't hardcode Bengali numerals.
+- UI copy is Bengali. Keep tone consistent with existing strings — direct, personal, not corporate.
+- Design tokens: ivory `#FFFFF0`, ink `#120D12`, muted `#5D5D5D`, hairline `rgba(18,13,18,0.14)`, accent `#8C6D3F`. Define them in `@theme` in `globals.css`, not inline hex.
+- No new dependency without checking it's actually needed — keep this app lean. Use `bun add` / `bun install`.
+- Every Supabase table write must respect the existing schema in `supabase/schema.sql`. If a schema change is needed, update that file and say so — don't silently add columns via the dashboard UI.
+- API routes under `app/api/cron/*` and `app/api/push/*` must validate the `Authorization: Bearer $CRON_SECRET` header (cron) or the authenticated user (push) before doing anything.
+- Prefer server actions/route handlers over client-side fetch to third-party services.
+- Don't add auth providers beyond Supabase email magic-link unless asked.
+- Don't reintroduce `window.storage`/localStorage patterns from the old prototype — this version is Supabase-backed, multi-device, and that's the point.

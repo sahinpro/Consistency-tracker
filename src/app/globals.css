@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=EB+Garamond:ital@0;1&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #fffff0;
+  --color-ink: #120d12;
+  --color-muted: #5d5d5d;
+  --color-hair: rgba(18, 13, 18, 0.14);
+  --color-accent: #8c6d3f;
+  --color-danger: #7a2e24;
+  --font-serif: "Noto Serif Bengali", serif;
+  --font-sans: "Hind Siliguri", sans-serif;
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+body {
+  background: var(--color-ivory);
+}
