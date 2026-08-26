@@ -17,7 +17,7 @@ export default function LoginPage() {
       hash.includes("otp_expired") ||
       hash.includes("access_denied");
     if (expired) {
-      setError("লিংকটা আর কাজ করছে না — একবার খুললেই শেষ। নতুন কোড পাঠাও, ইমেইলের ছয় অঙ্ক এখানে লিখো। লিংকে ক্লিক করো না।");
+      setError("লিংকটা আর কাজ করছে না — একবার খুললেই শেষ। নতুন কোড পাঠাও, ইমেইলের পুরো কোডটা এখানে লিখো। লিংকে ক্লিক করো না।");
       window.history.replaceState(null, "", "/login");
     }
   }, []);
@@ -81,7 +81,7 @@ export default function LoginPage() {
             }}
           >
             <p className="text-center text-sm text-muted mb-4">
-              {email}-এ কোড গেছে। ইনবক্স বা স্প্যাম চেক করো। লিংকে ক্লিক করো না — ছয় অঙ্কের কোডটা এখানে লিখো।
+              {email}-এ কোড গেছে। ইনবক্স বা স্প্যাম চেক করো। লিংকে ক্লিক করো না — ইমেইলের পুরো কোডটা এখানে লিখো।
             </p>
             <label className="sr-only" htmlFor="otp">
               লগইন কোড
@@ -89,10 +89,10 @@ export default function LoginPage() {
             <input
               id="otp"
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="৬ অঙ্কের কোড"
+              placeholder="৮ অঙ্কের কোড"
               className="w-full border-b border-ink bg-transparent py-2.5 mb-4 outline-none text-sm text-center tracking-widest"
             />
             <button
