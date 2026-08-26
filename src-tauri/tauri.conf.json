@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Consistency Dashboard",
+  "version": "1.0.0",
+  "identifier": "com.sahinpro.consistency",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "frontendDist": "../public-shell"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ধারাবাহিকতা ড্যাশবোর্ড",
+        "url": "https://cosmat.vercel.app",
+        "width": 420,
+        "height": 780,
+        "minWidth": 360,
+        "minHeight": 600,
+        "resizable": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' https://cosmat.vercel.app https://*.supabase.co; connect-src 'self' https://cosmat.vercel.app https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https://cosmat.vercel.app; script-src 'self' 'unsafe-inline' https://cosmat.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["msi", "nsis", "dmg", "app"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}
