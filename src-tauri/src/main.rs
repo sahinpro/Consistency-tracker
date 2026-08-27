@@ -44,6 +44,9 @@ fn main() {
                 })
                 .build(app)?;
 
+            use tauri_plugin_autostart::ManagerExt;
+            let _ = app.autolaunch().enable();
+
             // Start minimized to tray if launched via autostart
             if std::env::args().any(|a| a == "--minimized") {
                 if let Some(window) = app.get_webview_window("main") {

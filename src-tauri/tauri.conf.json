@@ -23,7 +23,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' https://cosmat.vercel.app https://*.supabase.co; connect-src 'self' https://cosmat.vercel.app https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https://cosmat.vercel.app; script-src 'self' 'unsafe-inline' https://cosmat.vercel.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com"
+      "csp": null
     }
   },
   "bundle": {

@@ -12,12 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest"
-            args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest"
-            args: "--target x86_64-apple-darwin"
-          - platform: "windows-latest"
+          - platform: macos-latest
+            args: --target aarch64-apple-darwin
+            artifact: macos-arm64
+          - platform: macos-latest
+            args: --target x86_64-apple-darwin
+            artifact: macos-intel
+          - platform: windows-latest
             args: ""
+            artifact: windows
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -40,7 +43,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: ${{ matrix.args }}
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: Consistency Dashboard ${{ github.ref_name }}
+          releaseDraft: true
+          prerelease: false
 
-      # Produces:
-      #  - Windows: .msi and .exe (NSIS) under src-tauri/target/release/bundle/
-      #  - macOS:   .dmg and .app under src-tauri/target/{arch}/release/bundle/
+      - name: upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            src-tauri/target/release/bundle/nsis/*.exe
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/*/release/bundle/dmg/*.dmg
+            src-tauri/target/*/release/bundle/macos/*.app
+          if-no-files-found: warn
