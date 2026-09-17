@@ -1,17 +1,52 @@
+const TIMEZONE = "Asia/Dhaka";
 const BN_DIGITS = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
 
 export function toBn(n: number | string): string {
   return String(n).replace(/[0-9]/g, (d) => BN_DIGITS[Number(d)]);
 }
 
+type DhakaParts = {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  weekday: number;
+};
+
+function dhakaParts(d: Date): DhakaParts {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(d);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((p) => p.type === type)?.value ?? "";
+  const year = Number(get("year"));
+  const month = Number(get("month"));
+  const day = Number(get("day"));
+  return {
+    year,
+    month,
+    day,
+    hour: Number(get("hour")) % 24,
+    minute: Number(get("minute")),
+    // Dhaka noon is 06:00 UTC on the same calendar date (no DST).
+    weekday: new Date(Date.UTC(year, month - 1, day, 6)).getUTCDay(),
+  };
+}
+
 export function todayStr(d: Date = new Date()): string {
-  return d.toISOString().slice(0, 10);
+  const { year, month, day } = dhakaParts(d);
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
 export function addDays(base: Date, n: number): Date {
-  const d = new Date(base);
-  d.setDate(d.getDate() + n);
-  return d;
+  return new Date(base.getTime() + n * 86_400_000);
 }
 
 export function tomorrowStr(): string {
@@ -22,10 +57,8 @@ const EVENING_HOUR = 21;
 const EVENING_MIN = 30;
 
 export function isEveningNow(d: Date = new Date()): boolean {
-  return (
-    d.getHours() > EVENING_HOUR ||
-    (d.getHours() === EVENING_HOUR && d.getMinutes() >= EVENING_MIN)
-  );
+  const { hour, minute } = dhakaParts(d);
+  return hour > EVENING_HOUR || (hour === EVENING_HOUR && minute >= EVENING_MIN);
 }
 
 const DAY_NAMES = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
@@ -35,5 +68,6 @@ const MONTH_NAMES = [
 ];
 
 export function prettyDateBn(d: Date = new Date()): string {
-  return `${DAY_NAMES[d.getDay()]}, ${toBn(d.getDate())} ${MONTH_NAMES[d.getMonth()]}`;
+  const { weekday, day, month } = dhakaParts(d);
+  return `${DAY_NAMES[weekday]}, ${toBn(day)} ${MONTH_NAMES[month - 1]}`;
 }

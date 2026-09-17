@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import BrandLogo from "@/components/BrandLogo";
+import { Button } from "@/components/ui/button";
 import { confirmEmailLink } from "./actions";
 
 export default async function ConfirmPage({
@@ -13,21 +15,21 @@ export default async function ConfirmPage({
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-ivory">
+    <main className="flex min-h-dvh items-center justify-center bg-background text-foreground">
       <div className="w-full max-w-sm px-6 text-center">
+        <div className="flex justify-center mb-4">
+          <BrandLogo size={80} />
+        </div>
         <h1 className="font-serif text-2xl mb-6">ধারাবাহিকতা ড্যাশবোর্ড</h1>
-        <p className="text-sm text-muted mb-6">
+        <p className="text-sm text-muted-foreground mb-6">
           ইমেইলের লিংক থেকে এসেছো। লগইন শেষ করতে নিচের বাটন চাপো — এভাবে Gmail আগে থেকে লিংক খুলে টোকেন নষ্ট করতে পারে না।
         </p>
         <form action={confirmEmailLink}>
           <input type="hidden" name="token_hash" value={token_hash} />
           <input type="hidden" name="type" value={type ?? "email"} />
-          <button
-            type="submit"
-            className="w-full min-h-11 bg-ink text-ivory py-2.5 text-sm hover:bg-accent"
-          >
+          <Button type="submit" className="w-full min-h-11">
             লগইন কনফার্ম করো
-          </button>
+          </Button>
         </form>
       </div>
     </main>

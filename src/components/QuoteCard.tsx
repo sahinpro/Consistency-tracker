@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 const REMINDERS = [
   { tag: "কুরআন", text: "নিশ্চয় কষ্টের সাথে স্বস্তি আছে।", src: "সূরা আশ-শারহ, ৯৪:৫–৬ (ভাবানুবাদ)" },
@@ -17,22 +20,28 @@ const REMINDERS = [
 ];
 
 export default function QuoteCard() {
-  const [idx, setIdx] = useState(() => Math.floor(Math.random() * REMINDERS.length));
+  // UTC day number — same on server and client, so hydration matches.
+  const [idx, setIdx] = useState(() => Math.floor(Date.now() / 86_400_000) % REMINDERS.length);
   const r = REMINDERS[idx];
 
   return (
-    <div className="border-y border-hair py-8 my-8">
-      <span className="inline-block text-[11px] text-accent border border-hair px-3 py-1 mb-4">
-        {r.tag}
-      </span>
-      <p className="font-serif font-medium text-[22px] leading-relaxed mb-3">&ldquo;{r.text}&rdquo;</p>
-      {r.src && <p className="italic text-[13px] text-muted">{r.src}</p>}
-      <button
-        onClick={() => setIdx((idx + 1) % REMINDERS.length)}
-        className="mt-5 border border-ink text-sm px-4 py-2 hover:bg-ink hover:text-ivory transition-colors"
-      >
-        পরবর্তী রিমাইন্ডার →
-      </button>
-    </div>
+    <Card className="my-8">
+      <CardContent>
+        <Badge variant="outline" className="mb-4">
+          {r.tag}
+        </Badge>
+        <p className="font-serif font-medium text-[22px] leading-relaxed mb-3">&ldquo;{r.text}&rdquo;</p>
+        {r.src && <p className="text-sm text-muted-foreground italic">{r.src}</p>}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-5 min-h-11 px-3"
+          onClick={() => setIdx((idx + 1) % REMINDERS.length)}
+        >
+          পরবর্তী রিমাইন্ডার →
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

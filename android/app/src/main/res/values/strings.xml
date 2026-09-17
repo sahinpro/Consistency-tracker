@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ধারাবাহিকতা</string>
+    <string name="mode_checking">রুট স্ট্যাটাস চেক হচ্ছে…</string>
+    <string name="mode_root">রুট মোড — Magisk পাওয়া গেছে</string>
+    <string name="mode_non_root">নন-রুট মোড — অ্যাক্সেসিবিলিটি/VPN পথ পরে আসবে</string>
+    <string name="engine_root">ব্লক ইঞ্জিন: RootBlockEngine</string>
+    <string name="engine_non_root">ব্লক ইঞ্জিন: NonRootBlockEngine</string>
+</resources>

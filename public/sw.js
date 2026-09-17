@@ -4,7 +4,7 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || 'কালকের টু-ডু লিস্ট এখনো তৈরি হয়নি।',
-      icon: '/icon-192.png',
+      icon: '/logo.png',
       badge: '/icon-192.png',
     })
   );

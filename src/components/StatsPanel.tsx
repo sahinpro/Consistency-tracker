@@ -2,6 +2,9 @@
 import { useState } from "react";
 import { useStats } from "@/hooks/useStats";
 import { prettyDateBn, toBn } from "@/lib/dates";
+import { Card, CardContent } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function StatsPanel({ userId }: { userId: string }) {
   const [range, setRange] = useState(30);
@@ -15,59 +18,57 @@ export default function StatsPanel({ userId }: { userId: string }) {
   return (
     <div className="mt-11">
       <h2 className="font-serif font-semibold text-[17px] mb-4">পরিসংখ্যান</h2>
-      <div className="flex border border-hair mb-5">
-        {[
-          { label: "এই সপ্তাহ", v: 7 },
-          { label: "এই মাস", v: 30 },
-        ].map((t) => (
-          <button
-            key={t.v}
-            onClick={() => setRange(t.v)}
-            className={`flex-1 text-center py-2 text-sm border-r border-hair last:border-r-0 ${
-              range === t.v ? "bg-ink text-ivory" : "text-muted"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={String(range)} onValueChange={(v) => setRange(Number(v))} className="mb-5">
+        <TabsList className="h-11 w-full">
+          <TabsTrigger value="7" className="flex-1">
+            এই সপ্তাহ
+          </TabsTrigger>
+          <TabsTrigger value="30" className="flex-1">
+            এই মাস
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-muted py-3.5">
+        <p className="text-sm text-muted-foreground py-3.5">
           এখনো কোনো ডেটা নেই — কাজ শেষ করা শুরু করলে এখানে ট্র্যাক হবে।
         </p>
       ) : (
         <>
-          <div className="flex gap-6 mb-5 pb-4 border-b border-hair">
-            <div>
-              <div className="font-serif font-bold text-2xl">{toBn(avgRate)}%</div>
-              <div className="text-[11.5px] text-muted mt-0.5">গড় সম্পন্নতার হার</div>
-            </div>
-            <div>
-              <div className="font-serif font-bold text-2xl">{toBn(perfectDays)}</div>
-              <div className="text-[11.5px] text-muted mt-0.5">১০০% সম্পন্ন দিন</div>
-            </div>
-            <div>
-              <div className="font-serif font-bold text-2xl">
-                {toBn(totalDone)}/{toBn(totalTasks)}
-              </div>
-              <div className="text-[11.5px] text-muted mt-0.5">মোট কাজ সম্পন্ন</div>
-            </div>
+          <div className="flex gap-3 mb-5">
+            <Card size="sm" className="flex-1">
+              <CardContent>
+                <div className="font-serif font-bold text-2xl">{toBn(avgRate)}%</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">গড় সম্পন্নতার হার</div>
+              </CardContent>
+            </Card>
+            <Card size="sm" className="flex-1">
+              <CardContent>
+                <div className="font-serif font-bold text-2xl">{toBn(perfectDays)}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">১০০% সম্পন্ন দিন</div>
+              </CardContent>
+            </Card>
+            <Card size="sm" className="flex-1">
+              <CardContent>
+                <div className="font-serif font-bold text-2xl">
+                  {toBn(totalDone)}/{toBn(totalTasks)}
+                </div>
+                <div className="mt-0.5 text-xs text-muted-foreground">মোট কাজ সম্পন্ন</div>
+              </CardContent>
+            </Card>
           </div>
 
           {entries.map((e) => {
             const rate = e.total ? Math.round((e.done / e.total) * 100) : 0;
             return (
               <div key={e.date} className="mb-3">
-                <div className="flex justify-between text-[12.5px] text-muted mb-1">
+                <div className="mb-1 flex justify-between text-xs text-muted-foreground">
                   <span>{prettyDateBn(new Date(e.date))}</span>
                   <span>
                     {toBn(e.done)}/{toBn(e.total)}
                   </span>
                 </div>
-                <div className="h-1.5 bg-hair">
-                  <div className="h-full bg-ink" style={{ width: `${rate}%` }} />
-                </div>
+                <Progress value={rate} className="h-1.5" />
               </div>
             );
           })}

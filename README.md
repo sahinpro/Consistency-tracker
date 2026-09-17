@@ -115,6 +115,7 @@ src/lib/
 
 public/                      manifest.json, sw.js, icons
 src-tauri/                   Rust desktop shell (tray, autostart)
+android/                     Kotlin native app (root detector + block engine)
 ```
 
 ---
@@ -123,12 +124,14 @@ src-tauri/                   Rust desktop shell (tray, autostart)
 
 | Table | Key | Purpose |
 |---|---|---|
-| `tasks` | `id`, indexed on `(user_id, date)` | one row per task, scoped to a user and a day |
+| `tasks` | `id`, indexed on `(user_id, date)` | one row per task; `text` is the title, `date` is the planned day; Phase 3 adds `planned_start_time`, `actual_start_time`, `completed_at`, `status` |
 | `streaks` | `user_id` | current streak `count` + `last_complete_date` |
 | `user_settings` | `user_id` | `notify_enabled`, `reminder_dismissed_date`, `notified_date` |
 | `push_subscriptions` | `id`, unique `endpoint` | one row per browser/device |
+| `block_config` | `user_id` | blocked apps/domains, daily window, ringtone |
+| `block_events` | `id` | honesty-mirror audit (`block_start`, override, `auto_relock`) |
 
-All four have Row Level Security enabled with a single `auth.uid() = user_id` policy for both `using` and `with check`, so a user can only ever touch their own rows. Every table cascades on user delete. Source of truth is `supabase/schema.sql` — change it there, never through the dashboard UI.
+All six have Row Level Security enabled with a single `auth.uid() = user_id` policy for both `using` and `with check`, so a user can only ever touch their own rows. Every table cascades on user delete. Source of truth is `supabase/schema.sql` — change it there, never through the dashboard UI. Existing production DBs apply additive SQL from `supabase/migrations/`.
 
 ---
 
@@ -206,6 +209,14 @@ Once deployed:
 
 That's native OS-level autostart — no `.bat`/`.exe` hacks — because the browser handles it once it's an installed PWA. Paired with web push (fires even when the app isn't open), the 9:30 PM reminder becomes a real background job instead of something that only works if a tab happens to be open.
 
+## 7. Android native (Phase 3)
+
+Kotlin app in `android/`, min SDK 26, same Supabase project as web/desktop. Root vs non-root is detected at runtime (`libsu`).
+
+**Existing database (this project):** SQL Editor → run `supabase/migrations/20260917_phase3_block.sql`. That adds task start/status columns plus `block_config` / `block_events` with RLS. Do not re-run `schema.sql` on a live DB.
+
+**Open the app:** Android Studio → Open → `android/`. First launch probes Magisk; grant the su prompt to get `ROOT_AVAILABLE`. Block engines are wired but do not suspend apps yet (that's Phase 3.2).
+
 ---
 
 ## Conventions
@@ -219,5 +230,5 @@ That's native OS-level autostart — no `.bat`/`.exe` hacks — because the brow
 
 ## Notes
 
-- `public/icon-192.png` and `public/icon-512.png` are referenced by `manifest.json` but not included — drop your own in.
+- Brand mark is `public/logo.png`. PWA sizes (`icon-192.png`, `icon-512.png`), `favicon.ico`, and Tauri bundle icons are generated from it.
 - `.cursorrules` in the repo root encodes the conventions above for Cursor's AI — keep it in sync if you change the architecture.

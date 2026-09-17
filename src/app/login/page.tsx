@@ -1,5 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
+import BrandLogo from "@/components/BrandLogo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
@@ -69,10 +72,13 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-ivory">
+    <main className="flex min-h-dvh items-center justify-center bg-background text-foreground">
       <div className="w-full max-w-sm px-6">
+        <div className="flex justify-center mb-4">
+          <BrandLogo size={80} />
+        </div>
         <h1 className="font-serif text-2xl mb-6 text-center">ধারাবাহিকতা ড্যাশবোর্ড</h1>
-        {error ? <p className="text-center text-sm text-danger mb-4">{error}</p> : null}
+        {error ? <p className="text-center text-sm text-destructive mb-4">{error}</p> : null}
         {sent ? (
           <form
             onSubmit={(e) => {
@@ -80,36 +86,33 @@ export default function LoginPage() {
               void verify();
             }}
           >
-            <p className="text-center text-sm text-muted mb-4">
+            <p className="text-center text-sm text-muted-foreground mb-4">
               {email}-এ কোড গেছে। ইনবক্স বা স্প্যাম চেক করো। লিংকে ক্লিক করো না — ইমেইলের পুরো কোডটা এখানে লিখো।
             </p>
             <label className="sr-only" htmlFor="otp">
               লগইন কোড
             </label>
-            <input
+            <Input
               id="otp"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 8))}
               inputMode="numeric"
               autoComplete="one-time-code"
               placeholder="৮ অঙ্কের কোড"
-              className="w-full border-b border-ink bg-transparent py-2.5 mb-4 outline-none text-sm text-center tracking-widest"
+              className="mb-4 h-11 text-center tracking-widest"
             />
-            <button
-              type="submit"
-              disabled={busy || code.length < 6}
-              className="w-full min-h-11 bg-ink text-ivory py-2.5 text-sm hover:bg-accent disabled:opacity-50"
-            >
+            <Button type="submit" disabled={busy || code.length < 6} className="w-full min-h-11">
               {busy ? "চেক হচ্ছে…" : "লগইন"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => void send()}
               disabled={busy}
-              className="w-full min-h-11 mt-3 text-sm text-muted hover:text-ink"
+              className="w-full min-h-11 mt-3"
             >
               আবার পাঠাও
-            </button>
+            </Button>
           </form>
         ) : (
           <form
@@ -121,22 +124,18 @@ export default function LoginPage() {
             <label className="sr-only" htmlFor="email">
               ইমেইল
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ইমেইল"
               autoComplete="email"
-              className="w-full border-b border-ink bg-transparent py-2.5 mb-4 outline-none text-sm"
+              className="mb-4 h-11"
             />
-            <button
-              type="submit"
-              disabled={busy || !email.includes("@")}
-              className="w-full min-h-11 bg-ink text-ivory py-2.5 text-sm hover:bg-accent disabled:opacity-50"
-            >
+            <Button type="submit" disabled={busy || !email.includes("@")} className="w-full min-h-11">
               {busy ? "পাঠানো হচ্ছে…" : "লগইন কোড পাঠাও"}
-            </button>
+            </Button>
           </form>
         )}
       </div>

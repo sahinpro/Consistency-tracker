@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react";
+import { Plus, X } from "lucide-react";
 import type { Task } from "@/hooks/useTasks";
 import { toBn } from "@/lib/dates";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 
 export default function TaskList({
   tasks,
@@ -29,47 +34,52 @@ export default function TaskList({
     <div>
       <div className="flex justify-between items-baseline mb-2">
         <h2 className="font-serif font-semibold text-[17px]">আজকের অবশ্য-করণীয়</h2>
-        <span className="text-sm text-muted">
+        <span className="text-sm text-muted-foreground">
           {toBn(done)}/{toBn(tasks.length)}
         </span>
       </div>
-      <div className="h-[2px] bg-hair mb-6">
-        <div className="h-full bg-ink transition-all" style={{ width: `${pct}%` }} />
-      </div>
+      <Progress value={pct} className="mb-6 h-2" />
+
+      {tasks.length === 0 ? (
+        <p className="py-3 text-sm text-muted-foreground">আজকের জন্য এখনো কোনো কাজ নেই।</p>
+      ) : null}
 
       {tasks.map((t) => (
-        <div key={t.id} className="group flex items-center gap-4 py-3 border-b border-hair">
-          <button
-            onClick={() => onToggle(t.id, !t.done)}
-            className={`w-[18px] h-[18px] shrink-0 border border-ink flex items-center justify-center text-[11px] ${
-              t.done ? "bg-ink text-ivory" : ""
-            }`}
-          >
-            {t.done ? "✓" : ""}
-          </button>
-          <span className={`flex-1 text-[15px] ${t.done ? "text-muted line-through" : ""}`}>
+        <div key={t.id} className="group flex items-center gap-4 py-3 border-b border-border">
+          <Checkbox
+            checked={t.done}
+            onCheckedChange={(checked) => void onToggle(t.id, checked === true)}
+            aria-label={t.text}
+          />
+          <span className={`flex-1 text-[15px] ${t.done ? "text-muted-foreground line-through" : ""}`}>
             {t.text}
           </span>
-          <button
-            onClick={() => onDelete(t.id)}
-            className="text-muted opacity-0 group-hover:opacity-100 hover:text-danger transition-opacity"
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => void onDelete(t.id)}
+            aria-label="মুছুন"
+            className="size-11 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"
           >
-            ✕
-          </button>
+            <X className="size-4" />
+          </Button>
         </div>
       ))}
 
-      <div className="flex border-b border-ink mt-4">
-        <input
+      <div className="mt-4 flex items-center gap-2">
+        <Input
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && submit()}
+          onKeyDown={(e) => e.key === "Enter" && void submit()}
           placeholder="আজকের জন্য একটা কাজ যোগ করুন..."
-          className="flex-1 bg-transparent py-2.5 px-1 text-sm outline-none"
+          aria-label="নতুন কাজ"
+          className="h-11"
         />
-        <button onClick={submit} className="px-1 font-semibold text-sm hover:text-accent">
+        <Button type="button" className="h-11 shrink-0" onClick={() => void submit()}>
+          <Plus className="size-4" />
           যোগ করো
-        </button>
+        </Button>
       </div>
     </div>
   );

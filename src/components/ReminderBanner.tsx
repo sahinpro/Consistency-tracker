@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Clock, Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { addDays, isEveningNow, prettyDateBn, todayStr, tomorrowStr } from "@/lib/dates";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 export default function ReminderBanner({ userId }: { userId: string }) {
   const supabase = createClient();
@@ -74,41 +78,60 @@ export default function ReminderBanner({ userId }: { userId: string }) {
   if (!visible) return null;
 
   return (
-    <div className="mt-9 border border-accent bg-accent/5 p-5">
-      <div className="flex justify-between items-start mb-2.5">
-        <h3 className="font-serif font-semibold text-[16px]">
-          ⏰ রাত ৯:৩০ — আগামীকালের পরিকল্পনা করার সময়
-        </h3>
-        <button onClick={dismiss} className="text-muted">
-          ✕
-        </button>
-      </div>
-      <p className="text-[13.5px] text-muted mb-4 leading-relaxed">
-        আগামীকালের ({prettyDateBn(addDays(new Date(), 1))}) জন্য এখনো কোনো টু-ডু লিস্ট তৈরি হয়নি।
-      </p>
-      {draft.map((t, i) => (
-        <div key={i} className="flex justify-between text-sm py-2">
-          <span>{t}</span>
-          <button onClick={() => setDraft((d) => d.filter((_, j) => j !== i))} className="text-muted">
-            ✕
-          </button>
+    <Card className="mt-9 border-primary">
+      <CardContent>
+        <div className="mb-2.5 flex items-start justify-between gap-2">
+          <h3 className="flex items-center gap-2 font-serif text-base font-semibold">
+            <Clock className="size-4 shrink-0" aria-hidden="true" />
+            রাত ৯:৩০ — আগামীকালের পরিকল্পনা করার সময়
+          </h3>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-11 shrink-0"
+            onClick={() => void dismiss()}
+            aria-label="বন্ধ করো"
+          >
+            <X className="size-4" />
+          </Button>
         </div>
-      ))}
-      <div className="flex border-b border-accent mb-3.5">
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && add()}
-          placeholder="আগামীকালের একটা কাজ লেখো..."
-          className="flex-1 bg-transparent py-2 px-1 text-sm outline-none"
-        />
-        <button onClick={add} className="px-1 text-accent font-semibold text-sm">
-          + যোগ করো
-        </button>
-      </div>
-      <button onClick={save} className="bg-ink text-ivory text-sm px-4 py-2 hover:bg-accent">
-        লিস্ট সংরক্ষণ করো
-      </button>
-    </div>
+        <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+          আগামীকালের ({prettyDateBn(addDays(new Date(), 1))}) জন্য এখনো কোনো টু-ডু লিস্ট তৈরি হয়নি।
+        </p>
+        {draft.map((t, i) => (
+          <div key={i} className="flex justify-between items-center text-sm py-2">
+            <span>{t}</span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-11 shrink-0"
+              onClick={() => setDraft((d) => d.filter((_, j) => j !== i))}
+              aria-label="মুছুন"
+            >
+              <X className="size-4" />
+            </Button>
+          </div>
+        ))}
+        <div className="mb-3.5 flex items-center gap-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && add()}
+            placeholder="আগামীকালের একটা কাজ লেখো..."
+            aria-label="আগামীকালের কাজ"
+            className="h-11"
+          />
+          <Button type="button" variant="secondary" className="h-11 shrink-0" onClick={add}>
+            <Plus className="size-4" />
+            যোগ করো
+          </Button>
+        </div>
+        <Button type="button" className="h-11" onClick={() => void save()}>
+          লিস্ট সংরক্ষণ করো
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

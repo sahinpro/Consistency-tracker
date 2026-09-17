@@ -1,7 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { subscribeToPush } from "@/lib/push";
+import { Switch } from "@/components/ui/switch";
 
 export default function NotifyToggle({ userId }: { userId: string }) {
   const supabase = createClient();
@@ -30,13 +32,12 @@ export default function NotifyToggle({ userId }: { userId: string }) {
   };
 
   return (
-    <button
-      onClick={toggle}
-      className={`text-[11px] border px-2.5 py-1 transition-colors ${
-        on ? "border-ivory text-ivory" : "border-ivory/35 text-[#C9BFAE]"
-      }`}
-    >
-      🔔 নোটিফিকেশন {on ? "চালু" : "বন্ধ"}
-    </button>
+    <label className="inline-flex cursor-pointer items-center gap-2">
+      <Switch checked={on} onCheckedChange={toggle} aria-label="নোটিফিকেশন" />
+      <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+        <Bell className="size-3.5" aria-hidden="true" />
+        নোটিফিকেশন
+      </span>
+    </label>
   );
 }
